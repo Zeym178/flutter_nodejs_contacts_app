@@ -2,24 +2,26 @@ const express = require("express");
 const asyncHandler = require("express-async-handler");
 const jwt = require("jsonwebtoken");
 
-const valideTokenHandler = asyncHandler( async (req, res, next) => {
+const valideTokenHandler = asyncHandler(async(req, res, next) =>{
     let token;
-    const authHeader = req.headers.Authorization || req.headers.authorization;
-    if(authHeader && authHeader.startsWith("Bearer")) {
-        token = authHeader.split(" ")[1];
-        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
-            if(err) {
+    const userHeader = req.headers.Authorization || req.headers.authorization;
+    if(userHeader && userHeader.startsWith("Bearer")) {
+        token = userHeader.split(" ")[1];
+        jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, decoded) => {
+            if(error) {
                 res.status(401);
-                throw new Error("User is not authorized");
+                throw new Error("User Unathorized");
             }
-            console.log(decoded);
             req.user = decoded.user;
             next();
-        });        
+        });
         if(!token) {
             res.status(401);
-            throw new Error("User unauthorized or token missing");
+            throw new Error("User Unathorized or there's not token");
         }
+    } else {
+        res.status(401);
+        throw new Error("There's not token included ");
     }
 });
 
