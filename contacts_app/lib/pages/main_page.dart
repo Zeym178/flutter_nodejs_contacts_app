@@ -1,5 +1,6 @@
 import 'package:contacts_app/pages/home_page.dart';
 import 'package:contacts_app/pages/login_page.dart';
+import 'package:contacts_app/pages/register_page.dart';
 import 'package:contacts_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
@@ -12,6 +13,17 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   AuthService authService = AuthService();
+  bool register = false;
+
+  void toggleViews() {
+    setState(() {
+      if (register) {
+        register = false;
+      } else {
+        register = true;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +38,9 @@ class _MainPageState extends State<MainPage> {
           return HomePage();
         }
 
-        return LoginPage();
+        return register
+            ? RegisterPage(goToLogin: toggleViews)
+            : LoginPage(goToRegister: toggleViews);
       },
     );
   }

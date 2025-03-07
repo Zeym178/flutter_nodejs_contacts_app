@@ -1,35 +1,41 @@
-import 'package:contacts_app/pages/home_page.dart';
 import 'package:contacts_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatefulWidget {
-  final VoidCallback goToRegister;
-  const LoginPage({super.key, required this.goToRegister});
+class RegisterPage extends StatefulWidget {
+  final VoidCallback goToLogin;
+  const RegisterPage({super.key, required this.goToLogin});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final AuthService authService = AuthService();
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _password1Controller = TextEditingController();
   String errorMessage = "";
 
-  void _login() async {
-    bool isLoggedIn = await authService.login(
+  void _register() async {
+    if (_passwordController.text != _password1Controller.text) {
+      setState(() {
+        errorMessage = "Las contraseñas no coiciden";
+      });
+      return;
+    }
+
+    final success = await authService.register(
+      _nameController.text,
       _emailController.text,
       _passwordController.text,
     );
 
-    if (isLoggedIn) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => HomePage()),
-      );
+    if (success) {
+      widget.goToLogin();
     } else {
       setState(() {
-        errorMessage = "Usuario o Contraseña incorrectas";
+        errorMessage = "Los campos no son validos !";
       });
     }
   }
@@ -37,6 +43,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     // TODO: implement dispose
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -48,6 +55,17 @@ class _LoginPageState extends State<LoginPage> {
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: TextField(
+              controller: _nameController,
+              decoration: InputDecoration(
+                hintText: 'Name',
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
             child: TextField(
@@ -70,15 +88,26 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            child: TextField(
+              controller: _password1Controller,
+              decoration: InputDecoration(
+                hintText: 'Password again',
+                filled: true,
+                fillColor: Colors.white,
+              ),
+            ),
+          ),
           ElevatedButton(
-            onPressed: _login,
-            child: Center(child: Text('Log In')),
+            onPressed: _register,
+            child: Center(child: Text('Register')),
           ),
           SizedBox(height: 20),
           GestureDetector(
-            onTap: widget.goToRegister,
+            onTap: widget.goToLogin,
             child: Text(
-              "Registrate ahora",
+              "Ya tienes una cuenta ..?, Logeate",
               style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
             ),
           ),

@@ -6,7 +6,7 @@ const { constants } = require("../constants");
 //@access private
 const getAllContacts = asyncHandler(async (req, res) => {
     const contact = await Contact.find({user_id: req.user.id});
-    res.json(contact);
+    res.status(200).json(contact);
     // res.json({ message: "Get all contacts " });
 });
 
@@ -45,7 +45,7 @@ const createContact = asyncHandler(async (req, res) => {
             user_id: req.user.id
         }
     );
-    res.json(contact);
+    res.status(201).json(contact);
 });
 
 //@desc update a contact
@@ -68,7 +68,7 @@ const updateContact = asyncHandler(async (req, res) => {
         req.body,
         { new: true }
     );
-    res.json(updatedContact);
+    res.status(200).json(updatedContact);
 });
 
 //@desc delete a contact
@@ -88,7 +88,7 @@ const deleteContact = asyncHandler(async (req, res) => {
 
     await contact.deleteOne({_id: req.params.id});
 
-    res.json(contact);
+    res.status(200).json(contact);
 });
 
 module.exports = {
