@@ -24,7 +24,7 @@ const getContact = asyncHandler(async (req, res) => {
         res.status(403);
         throw new Error("The contacts it's not yours");
     }
-    res.json(contact);
+    res.status(200).json(contact);
 });
 
 //@desc create a contact

@@ -99,6 +99,25 @@ class AuthService {
     }
   }
 
+  Future<Map?> getOneContact(String id) async {
+    final prefs = await SharedPreferences.getInstance();
+    final token = prefs.getString(_tokenKey);
+    final response = await http.get(
+      Uri.parse("$BASE_URL/contacts/$id"),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data;
+    } else {
+      return null;
+    }
+  }
+
   Future<bool> updateContact(
     String id,
     String name,

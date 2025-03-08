@@ -1,5 +1,6 @@
+import 'package:contacts_app/components/my_drawer.dart';
 import 'package:contacts_app/pages/contact_page.dart';
-import 'package:contacts_app/pages/main_page.dart';
+import 'package:contacts_app/auth/main_page.dart';
 import 'package:contacts_app/services/auth_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -18,6 +19,10 @@ class _HomePageState extends State<HomePage> {
   final _newemailController = TextEditingController();
   final _newphoneController = TextEditingController();
   String errorMessage = "";
+
+  void refresh() {
+    setState(() {});
+  }
 
   void showSuccessAlert(String message) {
     QuickAlert.show(
@@ -67,47 +72,58 @@ class _HomePageState extends State<HomePage> {
             builder: (context) {
               return AlertDialog(
                 title: Center(child: Text("Crear Nuevo Contacto")),
-                content: Column(
-                  children: [
-                    TextField(
-                      controller: _newnameController,
-                      decoration: InputDecoration(hintText: "Nombre"),
-                    ),
-                    TextField(
-                      controller: _newemailController,
-                      decoration: InputDecoration(hintText: "email"),
-                    ),
-                    TextField(
-                      controller: _newphoneController,
-                      decoration: InputDecoration(hintText: "phone"),
-                    ),
-                  ],
+                content: Container(
+                  height: 200,
+                  child: Column(
+                    children: [
+                      TextField(
+                        controller: _newnameController,
+                        decoration: InputDecoration(hintText: "Nombre"),
+                      ),
+                      TextField(
+                        controller: _newemailController,
+                        decoration: InputDecoration(hintText: "email"),
+                      ),
+                      TextField(
+                        controller: _newphoneController,
+                        decoration: InputDecoration(hintText: "phone"),
+                      ),
+                    ],
+                  ),
                 ),
                 actions: [
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Container(
-                      height: 20,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.pop(context);
+                          _newnameController.clear();
+                          _newemailController.clear();
+                          _newphoneController.clear();
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(child: Text("Cancelar")),
+                        ),
                       ),
-                      child: Center(child: Text("Cancelar")),
-                    ),
-                  ),
-
-                  GestureDetector(
-                    onTap: createContact,
-                    child: Container(
-                      height: 20,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.secondary,
+                      SizedBox(width: 20),
+                      GestureDetector(
+                        onTap: createContact,
+                        child: Container(
+                          padding: EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.secondary,
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Center(child: Text("Crear")),
+                        ),
                       ),
-                      child: Center(child: Text("Crear")),
-                    ),
+                    ],
                   ),
                 ],
               );
@@ -117,6 +133,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Theme.of(context).colorScheme.secondary,
         child: Center(child: Icon(Icons.add)),
       ),
+      drawer: MyDrawer(),
       appBar: AppBar(
         title: Text('C O N T A C T O S'),
         centerTitle: true,
@@ -212,7 +229,10 @@ class _HomePageState extends State<HomePage> {
                   context,
                   MaterialPageRoute(
                     builder:
-                        (context) => ContactPage(contact: contactsList[index]),
+                        (context) => ContactPage(
+                          contact: contactsList[index],
+                          refresh: refresh,
+                        ),
                   ),
                 );
               },
